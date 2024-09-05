@@ -1,0 +1,102 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.3'
+	id 'io.spring.dependency-management' version '1.1.6'
+	id 'com.google.protobuf' version '0.8.19'
+}
+
+group = 'com.gold'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+def grpcVersion = "1.66.0"
+def protobufVersion = '3.25.3'
+def protocVersion = protobufVersion
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// mapstruct 설정
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// grpc 프로토콜 버터를 사용하기 위한 핵심 라이브러리 (Protobuf 메시지의 직렬화 및 역직렬화를 지원합니다.)
+	implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+
+	// grpc 서버, 클라이언트 설정
+	implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE' // Spring Boot와 gRPC의 통합을 간편하게 도와주는 스타터
+	implementation 'net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE'
+	implementation "io.grpc:grpc-netty-shaded:${grpcVersion}" // Netty Shaded 사용(gRPC 서버와 클라이언트의 Netty 전송 계층을 제공)
+	implementation "io.grpc:grpc-protobuf:${grpcVersion}"     // Protobuf 메시지와 gRPC의 통합을 지원
+	implementation "io.grpc:grpc-stub:${grpcVersion}"         // gRPC 클라이언트 스텁을 생성
+	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'    // 이걸 추가해야 gRPC 컴파일시 javax 어노테이션 오류가 발생하지 않는다.
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:3.21.5"
+	}
+	plugins {
+		grpc {
+			artifact = 'io.grpc:protoc-gen-grpc-java:1.49.0'
+		}
+	}
+	// 생성된 파일이 위치할 경로를 지정해준다. 지정하지않으면, project root의 build디렉토리 하단에 위치하게됨.
+	// generatedFilesBaseDir = "$projectDir/src/grpc"
+	generateProtoTasks {
+		all()*.plugins{
+			grpc{}
+		}
+		ofSourceSet('main')
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+sourceSets {
+	main {
+		proto {
+			//srcDir '파일이 위치한 경로'
+			srcDir 'build/generated/source/proto/main/grpc/xb/note/grpc'
+			srcDir 'build/generated/source/proto/main/java/xb/note/grpc'
+			// 여기에 새로운 proto파일이 위치한 경로를 추가할 수 있음.
+		}
+	}
+	// test코드에서도 인식하도록 하려면 다음과 같이 작성하면 된다.
+	/*
+    test {
+        proto {
+            srcDir 'build/generated/source/proto/main/grpc/xb/note/grpc'
+            srcDir 'build/generated/source/proto/main/java/xb/note/grpc'
+        }
+    }
+    */
+}

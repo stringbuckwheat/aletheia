@@ -1,0 +1,39 @@
+# IntelliJ IDEA specific
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+*.class
+
+# Gradle specific
+.gradle/
+build/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# grpc specific
+build/extracted-include-protos/
+build/extracted-protos/
+build/generated/
+
+# Temporary files
+tmp/
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# yml
+**/src/main/resources/application.yml
+**/src/test/resources/application.yml
+
+**/src/main/auth/application.yml
+**/src/test/auth/application.yml
