@@ -35,12 +35,19 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-	// mapstruct 설정
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
-	// grpc 프로토콜 버터를 사용하기 위한 핵심 라이브러리 (Protobuf 메시지의 직렬화 및 역직렬화를 지원합니다.)
+	// grpc 프로토콜 버퍼
 	implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
 	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
 
@@ -59,15 +66,14 @@ dependencies {
 
 protobuf {
 	protoc {
-		artifact = "com.google.protobuf:protoc:3.21.5"
+		artifact = "com.google.protobuf:protoc:${protocVersion}"
 	}
+
 	plugins {
 		grpc {
-			artifact = 'io.grpc:protoc-gen-grpc-java:1.49.0'
+			artifact = 'io.grpc:protoc-gen-grpc-java:1.66.0'
 		}
 	}
-	// 생성된 파일이 위치할 경로를 지정해준다. 지정하지않으면, project root의 build디렉토리 하단에 위치하게됨.
-	// generatedFilesBaseDir = "$projectDir/src/grpc"
 	generateProtoTasks {
 		all()*.plugins{
 			grpc{}
@@ -80,23 +86,15 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.named('processResources') {
+	dependsOn tasks.named('generateProto')
+}
 
 sourceSets {
 	main {
-		proto {
-			//srcDir '파일이 위치한 경로'
-			srcDir 'build/generated/source/proto/main/grpc/xb/note/grpc'
-			srcDir 'build/generated/source/proto/main/java/xb/note/grpc'
-			// 여기에 새로운 proto파일이 위치한 경로를 추가할 수 있음.
+		java {
+			srcDirs 'build/generated/source/proto/main/grpc'
+			srcDirs 'build/generated/source/proto/main/java'
 		}
 	}
-	// test코드에서도 인식하도록 하려면 다음과 같이 작성하면 된다.
-	/*
-    test {
-        proto {
-            srcDir 'build/generated/source/proto/main/grpc/xb/note/grpc'
-            srcDir 'build/generated/source/proto/main/java/xb/note/grpc'
-        }
-    }
-    */
 }

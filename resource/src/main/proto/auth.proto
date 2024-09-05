@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package com.gold.auth;
+
+option java_package = "com.gold.resource";
+option java_outer_classname = "AuthProto";
+option java_multiple_files = true;
+
+service AuthService {
+  rpc getAuthentication(AuthRequest) returns (AletheiaUser) {}
+}
+
+message AuthRequest {
+  string token = 1;
+}
+
+message AletheiaUser {
+  int64 id = 1;
+  string username = 2;
+  string name = 3;
+}
