@@ -8,6 +8,10 @@ public class AuthApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AuthApplication.class, args);
+
+		// 서버 실행 테스트
+		HelloServiceServer helloServiceServer = new HelloServiceServer(50051);
+		helloServiceServer.start();
 	}
 
 }
