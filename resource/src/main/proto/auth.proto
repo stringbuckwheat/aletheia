@@ -17,5 +17,5 @@ message AuthRequest {
 message AletheiaUser {
   int64 id = 1;
   string username = 2;
-  string name = 3;
+  string role = 3;
 }

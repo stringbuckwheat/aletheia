@@ -24,22 +24,12 @@ public class AuthServiceClient {
     }
 
     public AletheiaUser getAuthentication(String token) {
-        try {
-            System.out.println("authServiceStub: " + authServiceStub);
-            // AuthRequest 메시지 생성
-            AuthRequest request = AuthRequest.newBuilder()
-                    .setToken(token)
-                    .build();
+        // AuthRequest 메시지 생성
+        AuthRequest request = AuthRequest.newBuilder()
+                .setToken(token)
+                .build();
 
-            System.out.println(request);
-
-            // 서버로 요청을 보내고 응답을 받음
-            return authServiceStub.getAuthentication(request);
-
-        } catch (StatusRuntimeException e) {
-            // 에러 처리
-            System.err.println("gRPC call failed: " + e.getStatus());
-            throw e;
-        }
+        // 서버로 요청을 보내고 응답을 받음
+        return authServiceStub.getAuthentication(request);
     }
 }
