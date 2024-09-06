@@ -1,4 +1,4 @@
-package com.gold.auth.common.token;
+package com.gold.auth.auth.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -31,7 +31,7 @@ public class AccessToken {
 
     // AccessToken 생성자 (발급 시)
     // User가 아니라 UserPrincipal로 만들도록 수정
-    public AccessToken(Long id, String username, Key key) {
+    public AccessToken(Long id, String username, String role, Key key) {
         LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(EXPIRED_AFTER);
         Date expiredDate = Date.from(expiredAt.atZone(ZoneId.systemDefault()).toInstant());
 
@@ -40,6 +40,7 @@ public class AccessToken {
 
         claims.put("iss", "aletheia_auth"); // 발행인
         claims.put("aud", id); // 토큰 대상자(User PK)
+        claims.put("role", role); // 권한
         claims.put("exp", LocalDateTime.now().toString()); // 발행 시간
 
         this.key = key;

@@ -28,10 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(
-                                        "/api/auth/user/login",
-                                        "/api/auth/user/register",
-                                        "/api/auth/user/token/reissue",
-                                        "/api/auth/user/logout"
+                                        "/api/auth/user/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 );

@@ -1,4 +1,4 @@
-package com.gold.auth.common.security;
+package com.gold.auth.auth.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

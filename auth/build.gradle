@@ -1,27 +1,27 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
-	id 'com.google.protobuf' version '0.8.19'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.google.protobuf' version '0.8.19'
 }
 
 group = 'com.gold'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
@@ -30,71 +30,72 @@ def protobufVersion = '3.25.3'
 def protocVersion = protobufVersion
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// mapstruct
-	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    // grpc 프로토콜 버퍼
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
 
-	// grpc 프로토콜 버퍼
-	implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
-	implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+    // grpc 서버, 클라이언트 설정
+    implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE'
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 
-	// grpc 서버, 클라이언트 설정
-	implementation 'net.devh:grpc-spring-boot-starter:3.1.0.RELEASE' // Spring Boot와 gRPC의 통합을 간편하게 도와주는 스타터
-	implementation "io.grpc:grpc-netty-shaded:${grpcVersion}" // Netty Shaded 사용(gRPC 서버와 클라이언트의 Netty 전송 계층을 제공)
-	implementation "io.grpc:grpc-protobuf:${grpcVersion}"     // Protobuf 메시지와 gRPC의 통합을 지원
-	implementation "io.grpc:grpc-stub:${grpcVersion}"         // gRPC 클라이언트 스텁을 생성
-	compileOnly 'org.apache.tomcat:annotations-api:6.0.53'    // 이걸 추가해야 gRPC 컴파일시 javax 어노테이션 오류가 발생하지 않는다.
-
-	// jwt
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    // jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
 protobuf {
-	protoc {
-		artifact = "com.google.protobuf:protoc:${protocVersion}"
-	}
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
 
-	plugins {
-		grpc {
-			artifact = 'io.grpc:protoc-gen-grpc-java:1.66.0'
-		}
-	}
-	generateProtoTasks {
-		all()*.plugins{
-			grpc{}
-		}
-		ofSourceSet('main')
-	}
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.66.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+        ofSourceSet('main')
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 tasks.named('processResources') {
-	dependsOn tasks.named('generateProto')
+    dependsOn tasks.named('generateProto')
+}
+
+tasks.named('clean') {
+    doFirst {
+        delete 'build/generated/source/proto'
+    }
 }
 
 sourceSets {
-	main {
-		java {
-			srcDirs 'build/generated/source/proto/main/grpc'
-			srcDirs 'build/generated/source/proto/main/java'
-		}
-	}
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
 }

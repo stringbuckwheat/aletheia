@@ -1,5 +1,6 @@
 package com.gold.auth.user.dto;
 
+import com.gold.auth.common.validation.IsRole;
 import com.gold.auth.user.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -20,13 +21,14 @@ public class RegisterRequest {
             message = "비밀번호는 숫자, 문자, 특수문자(!@#$%^&*+=())를 모두 포함해야합니다.")
     private String password;
 
-    private String name;
+    @IsRole
+    private String role;
 
     public void encryptPassword(String encryptedPassword) {
         this.password = encryptedPassword;
     }
 
     public User toEntity() {
-        return new User(username, password, name);
+        return new User(username, password, role);
     }
 }
