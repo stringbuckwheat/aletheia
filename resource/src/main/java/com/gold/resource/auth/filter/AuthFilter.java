@@ -40,7 +40,6 @@ public class AuthFilter extends OncePerRequestFilter {
         if (token != null) {
             // JWT -> Access Token 객체
             AletheiaUser user = authServiceClient.getAuthentication(token);
-            log.info("authClient.getAuthentication: {}", user);
             setAuthentication(user);
             log.info("인증 완료");
         }
