@@ -17,11 +17,12 @@ import java.io.IOException;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json; charset=UTF-8");
+        response.setContentType(CONTENT_TYPE);
 
         response.getWriter().write(objectMapper.writeValueAsString(new ErrorResponse(ErrorMessage.PLEASE_LOGIN.getMessage())));
     }

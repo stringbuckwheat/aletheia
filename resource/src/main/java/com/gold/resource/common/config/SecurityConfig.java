@@ -1,4 +1,4 @@
-package com.gold.resource.auth.config;
+package com.gold.resource.common.config;
 
 import com.gold.resource.auth.filter.AuthExceptionFilter;
 import com.gold.resource.auth.filter.AuthFilter;
@@ -35,7 +35,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/test").permitAll()
                                 .requestMatchers("/api/resource/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/resource/user/**").hasRole("USER")
                                 .anyRequest().authenticated()

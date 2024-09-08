@@ -1,6 +1,7 @@
 package com.gold.resource.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gold.resource.common.error.ErrorMessage;
 import com.gold.resource.common.error.ErrorResponse;
 import io.grpc.StatusRuntimeException;
 import jakarta.servlet.FilterChain;
@@ -21,18 +22,19 @@ import java.io.IOException;
 @Slf4j
 public class AuthExceptionFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            // JWT 필터에서 발생한 예외처리
+            // 인증/인가 필터에서 발생한 예외처리
             filterChain.doFilter(request, response);
         } catch (StatusRuntimeException e) {
             // Access Token 만료
             setErrorResponse(response, e.getStatus().getDescription());
         } catch (Exception e) {
             e.printStackTrace();
-            setErrorResponse(response, "예상치 못한 에러 발생!");
+            setErrorResponse(response, ErrorMessage.UNEXPECTED_ERROR_OCCURRED.getMessage());
         }
     }
 
@@ -46,7 +48,7 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
      */
     public void setErrorResponse(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json; charset=UTF-8");
+        response.setContentType(CONTENT_TYPE);
 
         ErrorResponse errorResponse = new ErrorResponse(message);
 

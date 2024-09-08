@@ -1,27 +1,15 @@
-package com.gold.resource.grpc;
+package com.gold.resource.auth.grpc;
 
 import com.gold.resource.AletheiaUser;
 import com.gold.resource.AuthRequest;
 import com.gold.resource.AuthServiceGrpc;
-import io.grpc.ManagedChannel;
-import io.grpc.StatusRuntimeException;
-import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceClient {
-
-    // gRPC Stub을 자동으로 주입받음
-//    @GrpcClient("auth")
-//    private AuthServiceGrpc.AuthServiceBlockingStub authServiceStub;
+    @GrpcClient("auth")
     private AuthServiceGrpc.AuthServiceBlockingStub authServiceStub;
-
-    public AuthServiceClient() {
-        ManagedChannel channel = NettyChannelBuilder.forAddress("localhost", 50051)
-                .usePlaintext()
-                .build();
-        authServiceStub = AuthServiceGrpc.newBlockingStub(channel);
-    }
 
     public AletheiaUser getAuthentication(String token) {
         // AuthRequest 메시지 생성
