@@ -1,15 +1,19 @@
 package com.gold.resource.sales.service;
 
-import com.gold.resource.sales.dto.SalesDetail;
-import com.gold.resource.sales.dto.SalesOverview;
-import com.gold.resource.sales.dto.SalesRequest;
+import com.gold.resource.common.dto.InvoiceRequest;
+import com.gold.resource.common.dto.InvoiceResponse;
+import com.gold.resource.invoice.dto.PagingInvoice;
+import com.gold.resource.sales.dto.SalesStatusUpdate;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface SalesService {
-    SalesDetail createSalesOrder(SalesRequest salesRequest, Long userId);
+    InvoiceResponse save(InvoiceRequest salesRequest, Long userId);
 
-    SalesDetail getDetail(Long salesId, Long userId);
+    InvoiceResponse getDetail(Long salesId, Long userId);
 
-    List<SalesOverview> getAll(Long userId);
+    PagingInvoice getAll(Long userId, Pageable pageable);
+
+    InvoiceResponse updateSalesStatus(Long salesId, SalesStatusUpdate status, Long userId);
 }

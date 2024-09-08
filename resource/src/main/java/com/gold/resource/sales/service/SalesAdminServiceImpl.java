@@ -1,7 +1,7 @@
 package com.gold.resource.sales.service;
 
+import com.gold.resource.common.dto.InvoiceResponse;
 import com.gold.resource.common.error.ErrorMessage;
-import com.gold.resource.sales.dto.SalesDetail;
 import com.gold.resource.sales.dto.SalesStatusUpdate;
 import com.gold.resource.sales.model.Sales;
 import com.gold.resource.sales.repository.SalesRepository;
@@ -20,12 +20,12 @@ public class SalesAdminServiceImpl implements SalesAdminService {
 
     @Override
     @Transactional
-    public SalesDetail updateSalesOrderStatus(Long salesId, SalesStatusUpdate status) {
+    public InvoiceResponse updateSalesOrderStatus(Long salesId, SalesStatusUpdate status) {
         Sales sales = salesRepository.findById(salesId)
                 .orElseThrow(() -> new NoSuchElementException(ErrorMessage.SALES_NOT_FOUND.getMessage()));
 
         sales.updateStatus(status.getStatus());  // 상태 변경
 
-        return new SalesDetail(sales);
+        return new InvoiceResponse(sales);
     }
 }

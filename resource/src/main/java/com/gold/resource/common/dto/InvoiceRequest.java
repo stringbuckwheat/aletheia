@@ -1,8 +1,10 @@
-package com.gold.resource.sales.dto;
+package com.gold.resource.common.dto;
 
 import com.gold.resource.common.validation.IsValidItem;
-import com.gold.resource.sales.enums.SalesStatus;
+import com.gold.resource.purchase.entity.Purchase;
+import com.gold.resource.purchase.enums.PurchaseStatus;
 import com.gold.resource.sales.enums.Item;
+import com.gold.resource.sales.enums.SalesStatus;
 import com.gold.resource.sales.model.Sales;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,9 +12,10 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 
+
 @ToString
 @Getter
-public class SalesRequest {
+public class InvoiceRequest {
     @NotNull(message = "품목은 필수입니다.")
     @IsValidItem
     private String item;
@@ -25,14 +28,27 @@ public class SalesRequest {
     @Min(value = 1, message = "금액은 0보다 커야 합니다.")
     private int price;
 
-    @NotBlank(message = "판매자 주소는 필수입니다.")
+    @NotBlank(message = "주소는 필수입니다.")
     private String address;
 
-    public Sales toEntityWith(Long userId, String salesNumber) {
+    public Sales toSales(Long userId, String salesNumber) {
         return Sales.builder()
                 .salesNumber(salesNumber)
                 .userId(userId)
                 .status(SalesStatus.ORDER_COMPLETED)
+                .item(Item.fromValue(item))
+                .quantity(quantity)
+                .price(price)
+                .address(address)
+                .build();
+    }
+
+
+    public Purchase toPurchase(Long userId, String purchaseNumber) {
+        return Purchase.builder()
+                .purchaseNumber(purchaseNumber)
+                .userId(userId)
+                .status(PurchaseStatus.ORDER_COMPLETED)
                 .item(Item.fromValue(item))
                 .quantity(quantity)
                 .price(price)

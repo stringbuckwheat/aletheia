@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sales")
@@ -41,6 +42,9 @@ public class Sales {
     @Column(name = "address", nullable = false)
     private String address; // 판매자 주소
 
+    @Column(nullable = false)
+    private LocalDateTime orderDate;
+
     @Builder
     public Sales(String salesNumber, Long userId, SalesStatus status, Item item, BigDecimal quantity, int price, String address) {
         this.salesNumber = salesNumber;
@@ -50,6 +54,7 @@ public class Sales {
         this.quantity = quantity;
         this.price = price;
         this.address = address;
+        this.orderDate = LocalDateTime.now();
     }
 
     // 주문 상태 업데이트

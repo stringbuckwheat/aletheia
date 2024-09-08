@@ -18,6 +18,7 @@ public enum SalesStatus {
                 return salesStatus;
             }
         }
+
         throw new IllegalArgumentException(status + "은/는 지원하지 않는 판매 상태입니다.");
     }
 }
