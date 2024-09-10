@@ -7,16 +7,11 @@ import java.util.UUID;
 
 @Getter
 public class RefreshToken {
-    private String token;
-    private LocalDateTime expiredAt;
+    private String token; // 토큰
+    private LocalDateTime expiredAt; // 만료일시
 
     public RefreshToken() {
         this.token = UUID.randomUUID().toString();
         this.expiredAt = LocalDateTime.now().plusHours(3);
-    }
-
-    public RefreshToken(String token, LocalDateTime expiredAt) {
-        this.token = token;
-        this.expiredAt = expiredAt;
     }
 }

@@ -8,6 +8,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 역할이 USER, ADMIN 둘 중 하나인지 검증하는 어노테이션
+ */
 @Constraint(validatedBy = IsRoleValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)

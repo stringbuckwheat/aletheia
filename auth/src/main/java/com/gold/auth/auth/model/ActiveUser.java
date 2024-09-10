@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.time.LocalDateTime;
 
 /**
- * Redis 저장용 엔티티
+ * Refresh Token을 Redis 저장하기 위한 엔티티
  */
 @Getter
 @RedisHash(value = "activeUser", timeToLive = 14400) // 4시간 저장
