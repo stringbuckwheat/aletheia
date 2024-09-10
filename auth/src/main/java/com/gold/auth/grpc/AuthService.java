@@ -5,6 +5,8 @@ import com.gold.auth.AuthRequest;
 import com.gold.auth.AuthServiceGrpc;
 import com.gold.auth.auth.token.AccessToken;
 import com.gold.auth.auth.service.TokenProvider;
+import com.gold.auth.common.error.ErrorMessage;
+import com.gold.auth.common.error.exception.RefreshTokenException;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import io.jsonwebtoken.Claims;
@@ -13,10 +15,17 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 
+import java.util.NoSuchElementException;
+
+/**
+ * gRPC를 통해 사용자 인증/인가 여부와 사용자 정보를 반환하는 서비스
+ */
 @RequiredArgsConstructor
 @GrpcService
+@Slf4j
 public class AuthService extends AuthServiceGrpc.AuthServiceImplBase {
     private final TokenProvider tokenProvider;
 
@@ -43,17 +52,23 @@ public class AuthService extends AuthServiceGrpc.AuthServiceImplBase {
         } catch (ExpiredJwtException e) {
             // JWT가 만료된 경우
             responseObserver.onError(Status.UNAUTHENTICATED
-                    .withDescription("액세스 토큰이 만료되었습니다. 재발급해주세요")
+                    .withDescription(ErrorMessage.ACCESS_TOKEN_EXPIRED.getMessage())
                     .asRuntimeException());
         } catch (UnsupportedJwtException | MalformedJwtException | SignatureException e) {
-            // 지원되지 않는 JWT의 경우
+            // 지원되지/유효하지 않은 JWT의 경우
             responseObserver.onError(Status.INVALID_ARGUMENT
-                    .withDescription("유효하지 않은 액세스 토큰입니다. 다시 로그인해주세요")
+                    .withDescription(ErrorMessage.INVALID_ACCESS_TOKEN.getMessage())
+                    .asRuntimeException());
+        } catch (RefreshTokenException | NoSuchElementException e) {
+            // RefreshTokenException: Refresh token 만료 등
+            // NoSuchElementException: Redis에 리프레쉬 토큰이 존재하지 않는 경우
+            responseObserver.onError(Status.UNAUTHENTICATED
+                    .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
             // 일반적인 예외 처리
             responseObserver.onError(Status.INTERNAL
-                    .withDescription("Internal server error: " + e.getMessage())
+                    .withDescription(ErrorMessage.UNEXPECTED_ERROR_OCCUR.getMessage())
                     .asRuntimeException());
         }
     }
