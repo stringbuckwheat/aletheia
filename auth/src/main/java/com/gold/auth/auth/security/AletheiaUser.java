@@ -2,6 +2,7 @@ package com.gold.auth.auth.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,9 +13,11 @@ import java.util.Collection;
  */
 @AllArgsConstructor
 @Getter
+@ToString
 public class AletheiaUser implements UserDetails {
     private Long id; // pk
     private String username;
+    private Collection<? extends GrantedAuthority> authorities; // 권한
 
     @Override
     public String getUsername() {
@@ -43,7 +46,7 @@ public class AletheiaUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override

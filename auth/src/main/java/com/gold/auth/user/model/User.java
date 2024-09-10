@@ -43,9 +43,19 @@ public class User {
     @LastModifiedDate
     private LocalDateTime updatedDate;
 
+    private LocalDateTime deletedAt; // Soft Delete
+
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public void updatePassword(String encryptedPassword) {
+        this.password = encryptedPassword;
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
