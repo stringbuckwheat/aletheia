@@ -1,0 +1,46 @@
+# 자원 서버
+server:
+  port: 9999
+
+grpc:
+  server:
+    address: '127.0.0.1'
+    port: 50052
+  client:
+    auth:
+      address: 'static://0.0.0.0:50051'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/aletheia_resource
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: your_username
+    password: your_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      '[hibernate.format_sql]': true
+    open-in-view: false
+
+
+springdoc:
+  packages-to-scan: com.gold.resource
+  override-with-generic-response: false
+  api-docs:
+    disable-default-response-messages: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    supportedSubmitMethods:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter : alpha
+    tags-sorter: alpha

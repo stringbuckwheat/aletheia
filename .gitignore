@@ -37,3 +37,7 @@ Thumbs.db
 
 **/src/main/auth/application.yml
 **/src/test/auth/application.yml
+
+# 로그
+auth.log
+resource.log
