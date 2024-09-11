@@ -156,9 +156,9 @@ public class UserPublicController {
                     )
             }
     )
-    @PostMapping("/token/reissue")
-    public ResponseEntity<String> reissueToken(@RequestBody AuthTokens authTokens){
-        return ResponseEntity.ok().body(userPublicService.reissueToken(authTokens.getRefreshToken()));
+    @PostMapping("/token")
+    public ResponseEntity<String> reissueToken(@RequestBody String refreshToken){
+        return ResponseEntity.ok().body(userPublicService.reissueToken(refreshToken));
     }
 
     @Operation(
@@ -181,9 +181,9 @@ public class UserPublicController {
             }
     )
     @PostMapping("/logout")
-    public ResponseEntity<Void> logOut(@RequestBody AuthTokens authTokens) {
+    public ResponseEntity<Void> logOut(@RequestBody String refreshToken) {
         // Redis에서 REFRESH_TOKEN 삭제
-        userPublicService.logOut(authTokens.getRefreshToken());
+        userPublicService.logOut(refreshToken);
         return ResponseEntity.noContent().build();
     }
 }

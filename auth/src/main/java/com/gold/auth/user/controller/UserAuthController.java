@@ -104,8 +104,8 @@ public class UserAuthController {
             description = "NO_CONTENT: 탈퇴 완료"
     )
     @DeleteMapping("")
-    public ResponseEntity<Void> delete(@RequestBody AuthTokens authTokens, @AuthenticationPrincipal AletheiaUser user) {
-        userAuthService.delete(user.getId(), authTokens.getRefreshToken());
+    public ResponseEntity<Void> delete(@RequestBody String refreshToken, @AuthenticationPrincipal AletheiaUser user) {
+        userAuthService.delete(user.getId(), refreshToken);
         return ResponseEntity.noContent().build();
     }
 }

@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.NoSuchElementException;
 
@@ -19,46 +21,58 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public HttpEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
 
         if (fieldError != null) {
             // @NotBlank 등 어노테이션의 직접 작성된 메시지 가져옴
             String errorMessage = fieldError.getDefaultMessage();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
+            return new ErrorResponse(errorMessage);
         }
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorMessage.REQUEST_VALIDATION_FAILED.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        return new ErrorResponse(ErrorMessage.REQUEST_VALIDATION_FAILED.getMessage());
     }
 
     @ExceptionHandler(HasSameUsernameException.class)
-    ResponseEntity<ErrorResponse> handleHasSameUsernameException(HasSameUsernameException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleHasSameUsernameException(HasSameUsernameException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(RefreshTokenException.class)
-    ResponseEntity<ErrorResponse> handleRefreshTokenException(RefreshTokenException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleRefreshTokenException(RefreshTokenException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNoSuchElementException(NoSuchElementException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(e.getMessage()));
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ErrorResponse handleMethodNotAllowed(NoHandlerFoundException e) {
+        return new ErrorResponse("METHOD_NOT_ALLOWED");
     }
 }
