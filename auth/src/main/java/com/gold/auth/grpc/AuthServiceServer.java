@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -35,14 +36,19 @@ public class AuthServiceServer {
 
             log.info("Server started on : {}", authServer.getPort());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error occurred while starting server: {}", e.getMessage(), e);
         }
     }
 
     @PreDestroy
     public void stop() {
         if (authServer != null) {
-            authServer.shutdown();
+            try {
+                authServer.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+                log.info("gRPC server stopped successfully");
+            } catch (InterruptedException e) {
+                log.error("error is occurred while terminate server: {}", e.getMessage(), e);
+            }
         }
     }
 }

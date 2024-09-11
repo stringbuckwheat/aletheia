@@ -2,10 +2,9 @@ package com.gold.auth.common.error;
 
 import com.gold.auth.common.error.exception.HasSameUsernameException;
 import com.gold.auth.common.error.exception.RefreshTokenException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
@@ -20,59 +19,79 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         FieldError fieldError = e.getBindingResult().getFieldError();
+        String errorMessage = fieldError != null ? fieldError.getDefaultMessage() : ErrorMessage.REQUEST_VALIDATION_FAILED.getMessage();
 
-        if (fieldError != null) {
-            // @NotBlank 등 어노테이션의 직접 작성된 메시지 가져옴
-            String errorMessage = fieldError.getDefaultMessage();
-            return new ErrorResponse(errorMessage);
-        }
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), errorMessage);
 
-        return new ErrorResponse(ErrorMessage.REQUEST_VALIDATION_FAILED.getMessage());
+        return new ErrorResponse(errorMessage);
     }
 
     @ExceptionHandler(HasSameUsernameException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleHasSameUsernameException(HasSameUsernameException e) {
+    public ErrorResponse handleHasSameUsernameException(HasSameUsernameException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUsernameNotFoundException(UsernameNotFoundException e) {
+    public ErrorResponse handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(RefreshTokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleRefreshTokenException(RefreshTokenException e) {
+    public ErrorResponse handleRefreshTokenException(RefreshTokenException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNoSuchElementException(NoSuchElementException e) {
+    public ErrorResponse handleNoSuchElementException(NoSuchElementException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public ErrorResponse handleMethodNotAllowed(NoHandlerFoundException e) {
-        return new ErrorResponse("METHOD_NOT_ALLOWED");
+    public ErrorResponse handleMethodNotAllowed(NoHandlerFoundException e, HttpServletRequest request) {
+        log.warn("threw {} in endpoint: {} with message: {}",
+                e.getClass().getSimpleName(), request.getRequestURI(), e.getMessage());
+
+        return new ErrorResponse(e.getMessage());
     }
 }

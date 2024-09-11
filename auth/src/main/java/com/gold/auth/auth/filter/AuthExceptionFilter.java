@@ -38,14 +38,22 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             // Access Token 만료
+            log.info("Access Token expired: {}, Message: {}, requestUrl: {}",
+                    request.getHeader("Authorization"), e.getMessage(), request.getRequestURL());
+
             setErrorResponse(response, ErrorMessage.ACCESS_TOKEN_EXPIRED.getMessage());
         } catch (JwtException | NumberFormatException e) {
             // 유효하지 않은 JWT 토큰 도착
             // NumberFormatException: Claim의 정보 형변환 과정에서의 오류
+            log.warn("{} by invalid access token: {}, Message: {}, requestUrl: {}",
+                    e.getClass().getSimpleName(),
+                    request.getHeader("Authorization"), e.getMessage(), request.getRequestURL());
+
             setErrorResponse(response, ErrorMessage.INVALID_ACCESS_TOKEN.getMessage());
         } catch (Exception e) {
             // 기타
-            e.printStackTrace();
+            log.error("Unexpected error occurred with message: {}, requestUrl: {}", e.getMessage(), request.getRequestURL(), e);
+
             setErrorResponse(response, ErrorMessage.UNEXPECTED_ERROR_OCCUR.getMessage());
         }
     }

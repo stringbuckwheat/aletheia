@@ -31,7 +31,7 @@ echo ">>>>> 자원 서버 빌드..."
 
 
 # 서버 실행 (백그라운드에서 실행)
-echo ">>>>> 백그라운드 서버 실행..."
+echo ">>>>> 백그라운드 서버 실행: 인증 서버..."
 nohup bash -c "(cd auth && ./gradlew bootRun)" > auth.log 2>&1 &
 AUTH_PID=$!
 

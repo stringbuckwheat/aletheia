@@ -30,9 +30,12 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
             // 인증/인가 필터에서 발생한 예외처리
             filterChain.doFilter(request, response);
         } catch (StatusRuntimeException e) {
+            log.error("gRPC Exception occurred in endpoint: {}, message: {}",
+                    request.getRequestURI(), e.getStatus().getDescription());
             setErrorResponse(response, e.getStatus().getDescription());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Unexpected error occurred with message: {}, requestUrl: {}",
+                    e.getMessage(), request.getRequestURL(), e);
             setErrorResponse(response, ErrorMessage.UNEXPECTED_ERROR_OCCURRED.getMessage());
         }
     }

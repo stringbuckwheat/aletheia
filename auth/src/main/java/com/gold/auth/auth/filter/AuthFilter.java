@@ -38,15 +38,12 @@ public class AuthFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("*** JWT FILTER: REQUEST URL: {}", request.getRequestURL());
-
         // 헤더에서 Access Token 추출
         String token = resolveToken(request);
 
         if (token != null) {
             // JWT 토큰을 AccessToken 객체로 변환
             AccessToken accessToken = tokenProvider.convertAccessToken(token);
-            log.info("access token: {}", accessToken);
 
             // SecurityContext에 인증 정보 설정
             setAuthenticationFromClaims(accessToken.getData());
@@ -72,13 +69,9 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationFromClaims(Claims claims) {
-        log.info("claims: {}", claims);
-
         Long userId = Long.valueOf(String.valueOf(claims.get("aud")));
         String username = claims.getSubject();
         String role = String.valueOf(claims.get("role"));
-
-        log.info("userId, username, role: {}, {}, {}", userId, username, role);
 
         tokenProvider.setAuthentication(userId, username, role);
     }
