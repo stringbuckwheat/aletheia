@@ -28,13 +28,16 @@
 <br/>
 
 ## Quick Start
+### 1. Create Database
+제출한 `.sql` 파일을 통해 `aletheia_auth` 데이터베이스, `aletheia_resource` 데이터베이스를 생성해주세요.
+
 ### 1. Git Clone
 ```shell
 git clone https://github.com/stringbuckwheat/aletheia.git
 ```
 
 ### 2. yml 파일 등록
-제출한 yml 파일을 `{project}/src/main/resource` 디렉토리에 각각 넣어주세요.
+제출한 `application-auth.yml`, `application-resource.yml` 파일을 `{auth 혹은 resource}/src/main/resource` 디렉토리에 각각 넣어주세요.
 
 ### 3. Shell Script를 통한 실행
 ```shell
@@ -45,7 +48,8 @@ chmod +x quick_start.sh
 ```
 
 `quick_start.sh` 는 다음의 동작을 실행합니다.
-1) 빌드 디렉토리 삭제
+1) `application-auth.yml`과 `application-resource.yml` 파일의 이름을 적절히 수정 
+2) 빌드 디렉토리 삭제
 2) gRPC 프로토콜 파일 생성
 3) 인증 서버, 자원 서버 빌드
 4) 백그라운드 서버 실행 
