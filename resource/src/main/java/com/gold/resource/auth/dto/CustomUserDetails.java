@@ -7,11 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * Custom UserDetail 객체
+ */
 @AllArgsConstructor
 @Getter
 public class CustomUserDetails implements UserDetails {
     private Long id; // pk
-    private String username;
+    private String username; // 아이디
     private Collection<? extends GrantedAuthority> authorities; // 권한
 
     public Long getId() { return id; }

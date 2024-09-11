@@ -29,10 +29,19 @@ public class AuthFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     private final AuthServiceClient authServiceClient;
 
-
+    /**
+     * Access Token(JWT) 검사 및 인증 정보 설정
+     * gRPC를 사용하여 인증 서버와 통신, 사용자 인증 여부 및 정보를 받아온 뒤 인증 정보 설정
+     *
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("*** JWT FILTER: REQUEST URL: {}", request.getRequestURL());
+        log.info("*** REQUEST URL: {}", request.getRequestURL());
 
         // 헤더에서 Access Token 추출
         String token = resolveToken(request);
@@ -41,7 +50,6 @@ public class AuthFilter extends OncePerRequestFilter {
             // JWT -> Access Token 객체
             AletheiaUser user = authServiceClient.getAuthentication(token);
             setAuthentication(user);
-            log.info("인증 완료");
         }
 
         filterChain.doFilter(request, response);
@@ -63,9 +71,13 @@ public class AuthFilter extends OncePerRequestFilter {
         return null;
     }
 
+    /**
+     * 인증 정보 설정
+     * @param user Custom UserDetails 객체
+     */
     private void setAuthentication(AletheiaUser user) {
         Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
-        CustomUserDetails userDetails = new CustomUserDetails(user.getId(), user.getUsername(), authorities);
+        CustomUserDetails userDetails = new CustomUserDetails(user.getId(), user.getUsername(), authorities); // PK, ID, 역할
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(token);
     }

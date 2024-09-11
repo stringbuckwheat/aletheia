@@ -30,7 +30,6 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
             // 인증/인가 필터에서 발생한 예외처리
             filterChain.doFilter(request, response);
         } catch (StatusRuntimeException e) {
-            // Access Token 만료
             setErrorResponse(response, e.getStatus().getDescription());
         } catch (Exception e) {
             e.printStackTrace();

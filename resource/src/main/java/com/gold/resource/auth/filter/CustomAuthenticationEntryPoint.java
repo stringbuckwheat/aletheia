@@ -3,7 +3,6 @@ package com.gold.resource.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gold.resource.common.error.ErrorMessage;
 import com.gold.resource.common.error.ErrorResponse;
-import io.grpc.StatusRuntimeException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * 인증 실패 시 클라이언트에 JSON 형식 예외 응답 반환
+ */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();

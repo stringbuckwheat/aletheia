@@ -27,14 +27,19 @@ public class SalesServiceImpl implements SalesService {
     private final SalesRepository salesRepository;
     private final InvoiceService invoiceService;
 
+    // 금 주문 저장
     @Override
     @Transactional
     public InvoiceResponse save(InvoiceRequest salesRequest, Long userId) {
+        // Human Readable한 주문 번호 생성
         String salesNumber = SalesNumberGenerator.generateSalesNumber();
+
+        // 저장
         Sales sales = salesRepository.save(salesRequest.toSales(userId, salesNumber));
         return new InvoiceResponse(sales);
     }
 
+    // 금 주문 상세 내역 보기
     @Override
     @Transactional(readOnly = true)
     public InvoiceResponse getDetail(Long salesId, Long userId) {
@@ -44,33 +49,27 @@ public class SalesServiceImpl implements SalesService {
 
     @Override
     @Transactional(readOnly = true)
-    public PagingInvoice getAll(Long userId, Pageable pageable) {
-        InvoiceQueryParam queryParam = InvoiceQueryParam.builder()
-                .userId(userId)
-                .invoiceType(InvoiceType.SALES)
-                .pageable(pageable)
-                .domain(InvoiceType.SALES)
-                .build();
-
-        return invoiceService.getAll(queryParam);
+    public PagingInvoice getAll(Long userId, InvoiceQueryParam invoiceQueryParam) {
+        return invoiceService.getAll(invoiceQueryParam);
     }
 
+    // 주문 상태 변경
     @Override
     @Transactional
     public InvoiceResponse updateSalesStatus(Long salesId, SalesStatusUpdate status, Long userId) {
         Sales sales = getSales(salesId, userId);
-
-        sales.updateStatus(status.getStatus());  // 상태 변경
-
+        sales.updateStatus(status.toStatus());  // 상태 변경
         return new InvoiceResponse(sales);
     }
 
     private Sales getSales(Long salesId, Long userId) {
+        // ID를 기준으로 조회
         Sales sales = salesRepository.findById(salesId)
                 .orElseThrow(() -> new NoSuchElementException(ErrorMessage.SALES_NOT_FOUND.getMessage()));
 
+        // 소유자 검증
         if(!sales.getUserId().equals(userId)) {
-            throw new AccessDeniedException(ErrorMessage.NOT_YOUR_SALES_INVOICE.getMessage());
+            throw new AccessDeniedException(ErrorMessage.NOT_YOUR_INVOICE.getMessage());
         }
 
         return sales;

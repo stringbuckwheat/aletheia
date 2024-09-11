@@ -18,6 +18,7 @@ public class IsValidSalesStateValidator implements ConstraintValidator<IsValidSa
             return false;
         }
 
-        return SalesStatus.fromString(value) != null;
+        SalesStatus.fromString(value);
+        return true;
     }
 }

@@ -35,8 +35,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/resource/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/resource/user/**").hasRole("USER")
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/api-docs/**",
+                                        "/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
