@@ -7,9 +7,9 @@
     * 기술 스택
     * ERD
 2. 주요 기능
-    * gRPC
+    * gRPC 기반 MSA 아키텍처
     * 금 구매/판매
-    * 통계
+    * QueryDsl 동적 쿼리를 사용한 거래 통계
 3. 트러블 슈팅
     * Shell Script
         * 통합 테스트 효율성을 위해 Shell Script 작성
@@ -57,7 +57,7 @@ Postman API 문서는 [이곳](https://documenter.getpostman.com/view/31325959/2
 * Spring Validation과 enum, `Custom Annotation`을 사용해 입력 데이터 유효성 검증
 
 ```java
-    @Schema(description = "수량", example = "3.75")
+@Schema(description = "수량", example = "3.75")
 @NotNull(message = "수량은 필수입니다.")
 @DecimalMin(value = "0.01", message = "수량은 최소 0.01g 이상이어야 합니다.")
 @Digits(integer = 10, fraction = 2, message = "수량은 최대 소수점 둘째 자리까지 입력 가능합니다.")
