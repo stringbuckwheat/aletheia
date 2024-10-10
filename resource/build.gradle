@@ -87,18 +87,20 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.named('processResources') {
-    dependsOn tasks.named('generateProto')
+def querydslSrcDir = 'src/main/generated'
+
+clean {
+    delete file(querydslSrcDir)
+}
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory = file(querydslSrcDir)
 }
 
-tasks.named('clean') {
-    doFirst {
-        delete 'build/generated/source/proto'
-    }
-}
 sourceSets {
     main {
         java {
+            srcDir 'src/main/java'
+            srcDir 'src/main/generated'
             srcDirs 'build/generated/source/proto/main/grpc'
             srcDirs 'build/generated/source/proto/main/java'
         }
